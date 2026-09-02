@@ -16,6 +16,10 @@ pkg install -y python2 || echo "Python 2 package not available on this mirror. S
 # 3. Clone dotfiles repository
 echo "Cloning dotfiles repository..."
 DOTFILES="$HOME/dotfiles"
+
+# Go to HOME first to avoid breaking CWD if we're inside DOTFILES
+cd "$HOME"
+
 rm -rf "$DOTFILES"
 git clone --depth=1 https://github.com/MichaelB11221/dotfiles.git "$DOTFILES"
 
@@ -25,7 +29,6 @@ CHSH=no RUNZSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubuserconte
 
 # 5. Set ZSH Custom path
 ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-mkdir -p "$ZSH_CUSTOM"
 mkdir -p "$ZSH_CUSTOM/themes"
 mkdir -p "$ZSH_CUSTOM/plugins"
 
@@ -70,11 +73,9 @@ echo "Configuring Termux..."
 mkdir -p "$HOME/.termux"
 
 if [ -d "$DOTFILES/termux" ]; then
-  # Copy everything inside termux/ folder to ~/.termux/
   cp -rf "$DOTFILES/termux/"* "$HOME/.termux/" 2>/dev/null || true
   echo "Copied termux/ configs to ~/.termux/"
 else
-  # Fallback if termux/ folder doesn't exist in repo
   cat << 'EOF' > "$HOME/.termux/termux.properties"
 extra-keys = [ \
   ['ESC','/','-','HOME','UP','END','PGUP'], \
